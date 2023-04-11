@@ -1,0 +1,20 @@
+{
+  "file": {
+    "path": "src/asslot/Solve.huff",
+    "source": "// #define constant ASSLOT_ADDRESS =  0x59A86B50bcF204a7a97C2D13C0ed1aa253D4b6ab\n#define constant ASSLOT_ADDRESS = FREE_STORAGE_POINTER()\n\n\n// Copied from https://github.com/minaminao/ctf-blockchain/blob/main/src/NumenCTF/ASSLOT/Solver.huff\n// I did not solve this challenge!\n\n#define macro CONSTRUCTOR() = takes(0) returns (0) {\n  0x20 //length of address [0x20]\n  0x20 codesize sub // [codesize - 0x20, 0x20] offset calculation \n  0x00 // [0x00, codesize - 0x20, 0x20] memory location to copy\n  codecopy\n\n  0x00 mload\n  [ASSLOT_ADDRESS]\n  sstore\n\n}\n\n#define macro MAIN() = takes(0) returns (0) {\n  calldatasize func jumpi\n\n  returndatasize\n  returndatasize\n  0x04\n  returndatasize\n  returndatasize\n  [ASSLOT_ADDRESS]\n  gas\n  call\n  returndatasize returndatasize return\n  \n  func: \n  returndatasize \n  balance\n  balance\n\n  0x1c3           // [0x1c3] Approximate gas used per loop \n  0x167e2   // [0x154b7, 0x1c3] Amount of gas used outside of the loop and excess gas (setup and emit)\n  gas             // [gas, 0x154b7, 0x1c3]\n  sub             // [gas - 0x154b7, 0x1c3] Remove excess gas\n  div             // [(gas - 0x154b7) / 0x1c3] divide remaining value to see which loop we are on\n  0x03            // [0x03, (gas - 0x154b7) / 0x1c3] \n  sub             // [i := 0x03 - (gas - 0x154b7) / 0x1c3] subtract from 3 to get loop\n  0x00 mstore\n  0x20 0x00 return\n}",
+    "access": null,
+    "dependencies": []
+  },
+  "bytecode": "602060203803600039600051600055602b8060183d393df336610012573d3d60043d3d60005af13d3df35b3d31316101c3620167e25a030460030360005260206000f3",
+  "runtime": "36610012573d3d60043d3d60005af13d3df35b3d31316101c3620167e25a030460030360005260206000f3",
+  "abi": {
+    "constructor": {
+      "inputs": []
+    },
+    "functions": {},
+    "events": {},
+    "errors": {},
+    "receive": false,
+    "fallback": false
+  }
+}
