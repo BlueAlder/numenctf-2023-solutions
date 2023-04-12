@@ -1,0 +1,45 @@
+// Modified from https://github.com/minaminao/ctf-blockchain/blob/main/src/NumenCTF/ASSLOT/Solver.huff
+// I did not solve this challenge!
+
+#define constant ASSLOT_ADDRESS = FREE_STORAGE_POINTER()
+
+#define macro CONSTRUCTOR() = takes(0) returns (0) {
+  0x20 //length of address [0x20]
+  0x20 codesize sub // [codesize - 0x20, 0x20] offset calculation 
+  0x00 // [0x00, codesize - 0x20, 0x20] memory location to copy
+  codecopy
+
+  0x00 mload
+  [ASSLOT_ADDRESS]
+  sstore
+}
+
+#define macro MAIN() = takes(0) returns (0) {
+  calldatasize func jumpi
+
+  returndatasize
+  returndatasize
+  0x04
+  returndatasize
+  returndatasize
+  [ASSLOT_ADDRESS]
+  sload
+  gas
+  call
+  returndatasize returndatasize return
+  
+  func: 
+  returndatasize 
+  balance
+  balance
+
+  0x1c3           // [0x1c3] Approximate gas used per loop 
+  0x154b5   // [0x154b7, 0x1c3] Amount of gas used outside of the loop and excess gas (setup and emit)
+  gas             // [gas, 0x154b7, 0x1c3]
+  sub             // [gas - 0x154b7, 0x1c3] Remove excess gas
+  div             // [(gas - 0x154b7) / 0x1c3] divide remaining value to see which loop we are on
+  0x03            // [0x03, (gas - 0x154b7) / 0x1c3] 
+  sub             // [i := 0x03 - (gas - 0x154b7) / 0x1c3] subtract from 3 to get loop
+  0x00 mstore
+  0x20 0x00 return
+}
